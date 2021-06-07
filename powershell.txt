@@ -1,0 +1,1 @@
+show only short path: Function Prompt { "$( ( get-item $pwd ).Name )>" }
