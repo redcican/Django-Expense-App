@@ -4,6 +4,8 @@ from django.views import View
 from django.contrib.auth.models import User
 import json
 from validate_email import validate_email
+from django.contrib import messages
+
 # Create your views here.
 
 
@@ -33,6 +35,13 @@ class EmailValidationView(View):
 
 class RegistrationView(View):
     def get(self, request):
+        return render(request, 'authentication/register.html')
+    
+    def post(self, request):
+        messages.info(request, 'Three credits remain in your account.')
+        messages.success(request, 'Profile details updated.')
+        messages.warning(request, 'Your account expires in three days.')
+        messages.error(request, 'Document deleted.')       
         return render(request, 'authentication/register.html')
     
     
