@@ -10,6 +10,8 @@ const emailSuccess = document.querySelector('#emailSuccess')
 const showPasswordToggle = document.querySelector('.showPasswordToggle')
 const passwordField = document.querySelector('#passwordField')
 
+const submitBtn = document.querySelector('#submit-btn')
+
 
 const handleToggleInput = (e) => {
     if(showPasswordToggle.textContent === 'SHOW'){
@@ -40,12 +42,15 @@ emailField.addEventListener('keyup', (e) => {
         })
             .then((res) => res.json())
             .then((data) => {
-                console.log("data", data);
                 emailSuccess.style.display = 'none'
                 if (data.email_error) {
+                    submitBtn.disabled = true;
                     emailField.classList.add("is-invalid");
                     emailFeedBackArea.style.display = "block";
                     emailFeedBackArea.innerHTML = `<p>${data.email_error}</p>`
+                }
+                else{
+                    submitBtn.removeAttribute('disabled')
                 }
             });
     }
@@ -55,11 +60,11 @@ emailField.addEventListener('keyup', (e) => {
 usernameField.addEventListener('keyup', (e) => {
     const usernameVal = e.target.value;
     usernameSuccess.style.display = 'block';
+    usernameSuccess.textContent = `Checking ${usernameVal}`
 
     usernameField.classList.remove("is-invalid");
     usernameFeedBackArea.style.display = "none";
 
-    usernameSuccess.textContent = `Checking ${usernameVal}`
 
     if(usernameVal.length > 0) {
         fetch("/authentication/validate-username", {
@@ -68,12 +73,14 @@ usernameField.addEventListener('keyup', (e) => {
         })
         .then((res) => res.json())
         .then((data) => {
-            console.log("data", data);
-            usernameSuccess.style.display = 'none'
+            usernameSuccess.style.display = 'none';
             if(data.username_error){
+                submitBtn.disabled = true
                 usernameField.classList.add("is-invalid");
                 usernameFeedBackArea.style.display = "block";
                 usernameFeedBackArea.innerHTML = `<p>${data.username_error}</p>`
+            } else {
+                submitBtn.removeAttribute('disabled')
             }
         }); 
     }
