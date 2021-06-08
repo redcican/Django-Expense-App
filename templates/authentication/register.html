@@ -11,7 +11,7 @@
 
     <div class="card-body">
         <div class="card-title text-center py-3">
-            <h4>Register a new account</h4>
+            <p class="h4 font-weight-bold">Register a new account</p>
         </div>
         <form action="" method="post">
           <div class="form-group">
@@ -23,9 +23,10 @@
               placeholder="Username"
               id="usernameField"
             />
-            <div class="invalid_feedback invalid-feedback" style="display:none">
+            <div id="username_invalid_feedback" class="invalid-feedback" style="display:none">
             </div>
           </div>
+          <p class="text-sm text-success" id="usernameSuccess"></p>
           <div class="form-group">
             <label for="exampleInputEmail">Email</label>
             <input
@@ -35,7 +36,10 @@
               placeholder="Email"
               id="emailField"
             />
+              <div id="email_invalid_feedback" class="invalid-feedback" style="display:none"></div>
           </div>
+          <p class="text-sm text-success" id="emailSuccess"></p>
+
             <div class="form-group">
             <label for="exampleInputPassword">Password</label>
             <input
@@ -45,7 +49,7 @@
               placeholder="Password"
               id="passwordField"
             />
-            <small class="float-right py-3">SHOW</small>
+            <small class="float-right py-3 showPasswordToggle">SHOW</small>
           </div>
           
         <input type="submit" value="Register" class="btn btn-block btn-primary"/>
