@@ -11,7 +11,7 @@ from django.utils.encoding import force_bytes, force_text, DjangoUnicodeDecodeEr
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.contrib.sites.shortcuts import get_current_site
 from django.urls import reverse
-
+from django.contrib import auth
 from .utils import token_generator
 # Create your views here.
 
@@ -96,4 +96,55 @@ class RegistrationView(View):
     
 class VerificationView(View):
     def get(self, request, uidb64, token):
+        
+        try:
+            id = force_text(urlsafe_base64_decode(uidb64))
+            user = User.objects.get(pk=id)
+            
+            if not token_generator.check_token(user, token):
+                return redirect('login'+'?message='+'User already activated')
+            
+            if user.is_active:
+                return redirect('login')
+            
+            user.is_active = True
+            user.save()
+            
+            messages.success(request, 'Account activated successfully')
+            return redirect('login')
+        except Exception as ex:
+            pass    
         return redirect('login')
+    
+
+class LoginView(View):
+    def get(self, request):
+        return render(request, 'authentication/login.html')
+    
+    def post(self, request):
+        username = request.POST['username']
+        password = request.POST['password']
+        
+        if username and password:
+            user = auth.authenticate(username=username, password=password)
+            
+            if user:
+                if user.is_active:
+                    auth.login(request, user)
+                    messages.success(request, 'Welcome, ' + user.username + ' you are now logged in')
+                    
+                    return redirect('expenses')
+                
+                else:
+                    messages.error(request, 'Account is not activated, plaese check your email.')
+                    
+                    return render(request, 'authentication/login.html')
+            
+            else:
+                messages.error(request, 'Invalid credentials, try again')
+                
+                return render(request, 'authentication/login.html')
+                
+        messages.error(request, 'Please fill all fields')
+        
+        return render(request, 'authentication/login.html')
