@@ -6,6 +6,7 @@ from django.core.paginator import Paginator
 # Create your views here.
 import json
 from django.http import JsonResponse
+from userpreferences.models import UserPreference
 
 def search_expenses(request):
     if request.method == 'POST':
@@ -33,7 +34,13 @@ def index(request):
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     
-    context = {'expenses': expenses, 'page_obj': page_obj}
+    currency = UserPreference.objects.get(user=request.user).currency
+    
+    context = {
+        'expenses': expenses, 
+        'page_obj': page_obj,
+        'currency': currency
+        }
     
     return render(request, 'expenses/index.html', context)
 
