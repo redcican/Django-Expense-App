@@ -3,6 +3,7 @@ from django.shortcuts import render
 from django.conf import settings
 import json
 from django.contrib import messages
+# from expenses.models import Category
 
 # Create your views here.
 def index(request):
@@ -17,7 +18,7 @@ def index(request):
             
     exists = UserPreference.objects.filter(user=request.user).exists()
     user_preferences = None
-    
+        
     if exists:
         user_preferences = UserPreference.objects.get(user=request.user)
         
