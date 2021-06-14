@@ -33,7 +33,6 @@ const renderChart = (data, labels, chartType, chartId) => {
                 text: 'Expenses per Category'
             },
             maintainAspectRatio: false,
-
         }
     });
 }
