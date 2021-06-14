@@ -1,3 +1,4 @@
+import datetime
 from expenses.models import Category, Expense
 from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
@@ -34,8 +35,11 @@ def index(request):
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     
-    currency = UserPreference.objects.get(user=request.user).currency
-    
+    exists = UserPreference.objects.filter(user=request.user).exists()
+    if exists:
+        currency = UserPreference.objects.get(user=request.user).currency
+    else:
+        currency = "USD"
     context = {
         'expenses': expenses, 
         'page_obj': page_obj,
@@ -68,8 +72,7 @@ def add_expense(request):
             messages.error(request, 'Description is required')
             return render(request, 'expenses/add_expense.html',context)
         
-        Expense.objects.create(amount=amount, description=description, date=date, category=category,
-                               owner=request.user)
+        Expense.objects.create(amount=amount, description=description, date=date, category=category,owner=request.user)
       
         messages.success(request, 'Added expense successfully!')
         
@@ -121,3 +124,34 @@ def delete_expense(request, id):
     expense.delete()
     messages.success(request, 'Deleted expense successfully')
     return redirect('expenses')
+
+
+def expense_category_summary(request):
+    todays_date = datetime.date.today()
+    six_months_ago = todays_date - datetime.timedelta(days=30*6)
+    expenses = Expense.objects.filter(owner=request.user,
+        date__gte = six_months_ago, date__lte = todays_date
+    )
+    
+    finalrep = {}
+    
+    category_list = list(set([expense.category for expense in expenses]))
+    
+    def get_expense_category_amount(category):
+        amount = 0
+        filtered_by_category = expenses.filter(category=category)
+
+        for item in filtered_by_category:
+            amount += item.amount
+            
+        return amount
+    
+    # for x in expenses:
+    for y in category_list:
+        finalrep[y] = get_expense_category_amount(y)
+                
+    return JsonResponse({'expense_category_data': finalrep}, safe=False)
+
+
+def stats_view(request):
+    return render(request, 'expenses/stats.html')
