@@ -11,6 +11,7 @@ validate-email = "*"
 six = "*"
 xlwt = "*"
 weasyprint = "*"
+django-debug-toolbar = "*"
 
 [dev-packages]
 
