@@ -11,10 +11,12 @@ from userpreferences.models import UserPreference
 import csv
 import xlwt
 
+from django.template.loader import get_template
+from xhtml2pdf import pisa
 # from django.template.loader import render_to_string
 # from weasyprint import HTML
 # import tempfile
-# from django.db.models import Sum
+from django.db.models import Sum
 
 def search_expenses(request):
     if request.method == 'POST':
@@ -215,6 +217,27 @@ def export_excel(request):
     return response
 
 
+def export_pdf(request):
+    template_path = 'expenses/pdf-output.html'
+    expenses = Expense.objects.filter(owner=request.user)
+
+    sum = expenses.aggregate(Sum('amount'))
+    context = { 'expenses': expenses,'total':sum['amount__sum']}
+    
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'filename=Expenses-' + \
+      str(datetime.datetime.now()) + '.pdf'
+      
+    template = get_template(template_path)
+    html = template.render(context)
+
+    pisa_status = pisa.CreatePDF(html, dest=response)
+    # import pdb
+    # pdb.set_trace()
+    if pisa_status.err:
+        return HttpResponse('We had some errors <pre>' + html + '</pre>')
+    
+    return response
 # def export_pdf(request):
 #     response = HttpResponse(content_type="application/pdf")
 #     response['Content-Disposition'] = 'inline; attachment; filename=Expenses-' + \
