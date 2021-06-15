@@ -9,7 +9,6 @@ import json
 from django.http import JsonResponse, HttpResponse
 from userpreferences.models import UserPreference
 import csv
-import xlwt
 
 from django.template.loader import get_template
 from xhtml2pdf import pisa

@@ -12,6 +12,7 @@ six = "*"
 xlwt = "*"
 weasyprint = "*"
 django-debug-toolbar = "*"
+xhtml2pdf = "*"
 
 [dev-packages]
 

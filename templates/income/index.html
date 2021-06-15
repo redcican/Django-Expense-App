@@ -24,7 +24,11 @@
   
   {% if income.count %}
     <div class="row">
-      <div class="col-md-8"></div>
+      <div class="col-md-8">
+        <a href="{% url 'export-income-excel' %}" class="btn btn-info">Export Excel</a>
+        <a href="{% url 'export-income-csv' %}" class="btn btn-secondary">Export CSV</a>
+        {% comment %} <a href="{% url 'export-income-pdf' %}" class="btn btn-primary">Export PDF</a> {% endcomment %}
+      </div>
       <div class="col-md-4">
         <input type="text" class="form-control" placeholder="Search"
           id="searchField">
@@ -49,7 +53,10 @@
         <td>{{ income.source }}</td>
         <td>{{ income.description }}</td>
         <td>{{ income.date }}</td>
-        <td><a href="{% url 'edit-income' income.id %}" class="btn btn-secondary btn-sm">Edit</a></td>
+        <td>
+        <a href="{% url 'edit-income' income.id %}" class="edit" title="Edit" data-toggle="tooltip"><i class="material-icons" style = "color:#FFC107;">&#xE254;</i></a>
+          <a href="{% url 'delete-income' income.id %}" class="delete" title="Delete" data-toggle="tooltip"><i class="material-icons" style = "color:#E34724;">&#xE872;</i></a>
+        </td>
         </tr>
       {% endfor %}
       </tbody>
